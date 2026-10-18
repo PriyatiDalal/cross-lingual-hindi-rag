@@ -8,7 +8,7 @@ import google.generativeai as genai
 
 api_key = os.environ.get("GEMINI_API_KEY")
 genai.configure(api_key=api_key)
-# Configure Gemini API key (or set via environment variable GEMINI_API_KEY)
+
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "YOUR_GEMINI_API_KEY_HERE")
 if GEMINI_API_KEY != "YOUR_GEMINI_API_KEY_HERE":
     genai.configure(api_key=GEMINI_API_KEY)
@@ -45,7 +45,7 @@ def extract_and_chunk_pdf(pdf_path: str, chunk_size: int = 500, overlap: int = 8
                 page_body.append(line_clean)
 
         full_page_text = " ".join(page_body)
-        # Split sentences by Hindi danda (।) and period (.)
+
         sentences = re.split(r"(?<=[।\.])\s+", full_page_text)
 
         current_chunk = ""
@@ -61,7 +61,7 @@ def extract_and_chunk_pdf(pdf_path: str, chunk_size: int = 500, overlap: int = 8
                         "section": current_section,
                     })
                     chunk_counter += 1
-                # Retain overlap from end of current chunk
+                    
                 overlap_text = current_chunk[-overlap:] if len(current_chunk) > overlap else ""
                 current_chunk = (overlap_text + " " + sentence).strip()
 
@@ -79,7 +79,7 @@ def extract_and_chunk_pdf(pdf_path: str, chunk_size: int = 500, overlap: int = 8
 
 class HindiRAGSystem:
     def __init__(self, collection_name="hindi_kalam_rag"):
-        # paraphrase-multilingual-MiniLM-L12-v2 or intfloat/multilingual-e5-base
+        
         self.embed_model = SentenceTransformer("sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
         self.chroma_client = chromadb.Client()
         try:
@@ -116,7 +116,7 @@ class HindiRAGSystem:
             doc_id = results["ids"][0][i]
             text = results["documents"][0][i]
             meta = results["metadatas"][0][i]
-            # Convert cosine distance to cosine similarity: score = 1 - distance
+            
             distance = results["distances"][0][i] if "distances" in results else 0.0
             score = round(1.0 - distance, 2)
             retrieved_docs.append({
